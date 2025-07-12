@@ -5,6 +5,7 @@ import 'react-calendar/dist/Calendar.css';
 import '../styles/calendar.css';
 import { patients, doctors } from '../data/lists';
 
+
 const formatDate = (dateObj) => {
   const year = dateObj.getFullYear();
   const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -30,6 +31,10 @@ const CalendarPage = () => {
   const [visibleDates, setVisibleDates] = useState(generateDateRange(new Date(), 7));
   const [hasLoaded, setHasLoaded] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [filterDoctor, setFilterDoctor] = useState('');
+  const [filterPatient, setFilterPatient] = useState('');
+  const [mobileDate, setMobileDate] = useState(new Date());
+
 
   useEffect(() => {
     const stored = localStorage.getItem('appointments');
@@ -75,15 +80,23 @@ const CalendarPage = () => {
   };
 
   const renderAppointments = (tileDate) => {
-    const dayAppointments = appointments.filter(
-      (appt) => appt.date === formatDate(tileDate)
-    );
+    const dayAppointments = appointments
+      .map((appt, index) => ({ ...appt, index }))
+      .filter(
+        (appt) =>
+          appt.date === formatDate(tileDate) &&
+          (filterDoctor === '' || appt.doctor === filterDoctor) &&
+          (filterPatient === '' || appt.patient === filterPatient)
+      );
+
     if (dayAppointments.length === 0) return null;
+
     return (
       <ul className="appt-list">
         {dayAppointments.slice(0, 2).map((appt, idx) => (
-          <li key={idx} className="appt-item">
+          <li key={appt.index} className="appt-item">
             🧑 {appt.patient.split(' ')[0]} @ {appt.time}
+        
           </li>
         ))}
         {dayAppointments.length > 2 && (
@@ -96,78 +109,119 @@ const CalendarPage = () => {
   return (
     <div className="calendar-page">
       <h2>Appointment Calendar</h2>
+
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
+        <select value={filterDoctor} onChange={(e) => setFilterDoctor(e.target.value)}>
+          <option value="">All Doctors</option>
+          {doctors.map((doc, idx) => (
+            <option key={idx} value={doc}>{doc}</option>
+          ))}
+        </select>
+
+        <select value={filterPatient} onChange={(e) => setFilterPatient(e.target.value)}>
+          <option value="">All Patients</option>
+          {patients.map((pat, idx) => (
+            <option key={idx} value={pat}>{pat}</option>
+          ))}
+        </select>
+      </div>
+
       {isMobile ? (
         <div className="mobile-scroll-view">
-          {visibleDates.map((day, idx) => {
-            const dateStr = formatDate(day);
-            const dayAppointments = appointments
-              .map((appt, index) => ({ ...appt, index }))
-              .filter((appt) => appt.date === dateStr);
+         <input
+      type="date"
+      value={formatDate(mobileDate)}
+      onChange={(e) => setMobileDate(new Date(e.target.value))}
+      style={{
+        width: '100%',
+        marginBottom: '16px',
+        padding: '8px',
+        fontSize: '16px',
+        borderRadius: '4px',
+        border: '1px solid #ccc'
+      }}
+    />
 
-            return (
-              <div key={idx} className="mobile-day">
-                <h3>{day.toDateString()}</h3>
+    <div className="mobile-day">
+      <h3>{mobileDate.toDateString()}</h3>
 
-                {dayAppointments.length > 0 ? (
-                  <ul className="appt-list">
-                    {dayAppointments.map((appt) => (
-                      <li key={appt.index} className="appt-item">
-                        🧑 {appt.patient} with {appt.doctor} @ {appt.time}
-                        <button
-                          onClick={() => handleDelete(appt.index)}
-                          className="delete-btn"
-                        >
-                          ❌
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No appointments</p>
-                )}
+      {appointments
+        .map((appt, index) => ({ ...appt, index }))
+        .filter(
+          (appt) =>
+            appt.date === formatDate(mobileDate) &&
+            (filterDoctor === '' || appt.doctor === filterDoctor) &&
+            (filterPatient === '' || appt.patient === filterPatient)
+        ).length > 0 ? (
+        <ul className="appt-list">
+          {appointments
+            .map((appt, index) => ({ ...appt, index }))
+            .filter(
+              (appt) =>
+                appt.date === formatDate(mobileDate) &&
+                (filterDoctor === '' || appt.doctor === filterDoctor) &&
+                (filterPatient === '' || appt.patient === filterPatient)
+            )
+            .map((appt) => (
+              <li key={appt.index} className="appt-item">
+                🧑 {appt.patient} with {appt.doctor} @ {appt.time}
+                <button
+                  onClick={() => handleDelete(appt.index)}
+                  className="delete-btn"
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+        </ul>
+      ) : (
+        <p>No appointments</p>
+      )}
 
-                <form onSubmit={(e) => handleSubmit(e, day)}>
-                  <select
-                    value={formData.patient}
-                    onChange={(e) => setFormData({ ...formData, patient: e.target.value })}
-                    required
-                  >
-                    <option value="">Select patient</option>
-                    {patients.map((p, i) => (
-                      <option key={i} value={p}>{p}</option>
-                    ))}
-                  </select>
+      <form onSubmit={(e) => handleSubmit(e, mobileDate)}>
+        <select
+          value={formData.patient}
+          onChange={(e) =>
+            setFormData({ ...formData, patient: e.target.value })
+          }
+          required
+        >
+          <option value="">Select patient</option>
+          {patients.map((p, i) => (
+            <option key={i} value={p}>
+              {p}
+            </option>
+          ))}
+        </select>
 
-                  <select
-                    value={formData.doctor}
-                    onChange={(e) => setFormData({ ...formData, doctor: e.target.value })}
-                    required
-                  >
-                    <option value="">Select doctor</option>
-                    {doctors.map((d, i) => (
-                      <option key={i} value={d}>{d}</option>
-                    ))}
-                  </select>
+        <select
+          value={formData.doctor}
+          onChange={(e) =>
+            setFormData({ ...formData, doctor: e.target.value })
+          }
+          required
+        >
+          <option value="">Select doctor</option>
+          {doctors.map((d, i) => (
+            <option key={i} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
 
-                  <input
-                    type="time"
-                    value={formData.time}
-                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                    required
-                  />
+        <input
+          type="time"
+          value={formData.time}
+          onChange={(e) =>
+            setFormData({ ...formData, time: e.target.value })
+          }
+          required
+        />
 
-                  <button type="submit">Save</button>
-                </form>
-              </div>
-            );
-          })}
-          <button onClick={() => {
-            const lastDate = visibleDates[visibleDates.length - 1];
-            const more = generateDateRange(new Date(lastDate), 7);
-            more.shift();
-            setVisibleDates([...visibleDates, ...more]);
-          }}>Load More Days</button>
-        </div>
+        <button type="submit">Save</button>
+      </form>
+    </div>
+  </div>
       ) : (
         <>
           <Calendar
@@ -183,6 +237,30 @@ const CalendarPage = () => {
             <div className="modal">
               <div className="modal-content">
                 <h3>Book Appointment for {date.toDateString()}</h3>
+
+                <ul className="appt-list">
+                  {appointments
+                    .map((appt, index) => ({ ...appt, index }))
+                    .filter(
+                      (appt) =>
+                        appt.date === formatDate(date) &&
+                        (filterDoctor === '' || appt.doctor === filterDoctor) &&
+                        (filterPatient === '' || appt.patient === filterPatient)
+                    )
+                    .map((appt) => (
+                      <li key={appt.index} className="appt-item">
+                        🧑 {appt.patient} with {appt.doctor} @ {appt.time}
+                        <button
+                          onClick={() => handleDelete(appt.index)}
+                          className="delete-btn"
+                        >
+                          Delete
+                        </button>
+
+                      </li>
+                    ))}
+                </ul>
+
                 <form onSubmit={(e) => handleSubmit(e)}>
                   <label htmlFor="patient-select">Patient:</label>
                   <select

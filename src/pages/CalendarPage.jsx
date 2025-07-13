@@ -298,6 +298,22 @@ const CalendarPage = () => {
                   />
 
                   <button type="submit">Save</button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => setShowForm(false)}
+                    style={{
+                      backgroundColor: '#e0e0e0',
+                      color: '#333',
+                      border: 'none',
+                      padding: '10px 16px',
+                      borderRadius: '8px',
+                      fontWeight: '500',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
                 </form>
               </div>
             </div>

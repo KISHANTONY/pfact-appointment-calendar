@@ -1,12 +1,117 @@
-# React + Vite
+# 🗓️ Clinic Appointment Calendar
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive calendar interface for clinic staff to view, manage, and schedule patient appointments. Built with **React** and styled for mobile and desktop views.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## Expanding the ESLint configuration
+- 🔐 **Login Authentication** (static demo credentials)
+- 🗓️ **Desktop Month View Calendar**
+  - View patient names and appointment times per date
+  - Click a date to open a modal and book/edit/delete appointments
+- 📱 **Mobile Day View**
+  - View one day at a time with a date picker
+  - Scroll vertically to manage appointments
+- ✅ **Appointment Filters** (by doctor and patient)
+- 💾 **Data Persistence via localStorage**
+- 🎨 **Modern UI**
+  - Polished color palette (calm + professional)
+  - Accent highlights for today, weekends, and active dates
+  - Minimal dot indicators for calendar tiles
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🖥️ Tech Stack
+
+- **React** (Vite)
+- **React Router**
+- **React Calendar**
+- **HTML5 / CSS3**
+- Responsive Design with custom media queries
+
+---
+
+## 🔑 Login Credentials
+
+```
+Email: staff@clinic.com  
+Password: 123456
+```
+
+---
+
+## 🛠️ Setup Instructions
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/clinic-calendar-app.git
+   cd clinic-calendar-app
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Run the app**
+   ```bash
+   npm run dev
+   ```
+
+4. Open in your browser:  
+   `http://localhost:5173`
+
+---
+
+## 📁 Project Structure
+
+```
+.
+├── public/
+├── src/
+│   ├── pages/
+│   │   ├── LoginPage.jsx
+│   │   └── CalendarPage.jsx
+│   ├── data/
+│   │   └── lists.js
+│   ├── styles/
+│   │   ├── main.css
+│   │   ├── login.css
+│   │   └── calendar.css
+│   ├── App.jsx
+│   └── main.jsx
+└── README.md
+```
+
+---
+
+## 📷 Screenshots
+
+> Include screenshots of:
+> - Desktop calendar
+> - Mobile day view
+> - Booking modal
+
+---
+
+## 💡 Future Improvements
+
+- 🔄 Backend API integration (MongoDB + Express)
+- 📆 Availability checker (slot conflict warnings)
+- 🧑‍⚕️ Role-based dashboards (doctor vs. admin)
+- 📨 Email notifications on appointment creation
+
+---
+
+## 👨‍💻 Author
+
+**Kishan K Tony**  
+📧 kishankktony@gmail.com  
+📱 +91 90486 25492
+
+---
+
+## 📜 License
+
+This project is licensed for educational/demo use. Attribution encouraged.
